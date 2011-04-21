@@ -1,0 +1,40 @@
+<html>
+  <head>
+	<script>
+		var fetchFreq = 60000;
+		var req;
+		var newMessages = 0;
+		var inbox;
+
+		getInbox();
+		setInterval(getInbox, fetchFreq);
+
+		function getInbox() {
+			req = new XMLHttpRequest();
+			req.open(
+			    "GET",
+			    "http://stackoverflow.com/inbox/genuwine");
+			req.onload = processInbox;
+			req.send();
+		}
+
+		function processInbox() {
+						
+			inbox = JSON.parse(req.responseText);
+	
+			for (var i = 0, message; message = inbox[i]; i++) {
+				if(message.IsNew != false) {
+					newMessages++;
+				}
+			}
+			
+			if(newMessages > 0) {
+				chrome.browserAction.setBadgeBackgroundColor({
+					color: [255, 0, 0, 255]
+				});
+				chrome.browserAction.setBadgeText({text: '' + newMessages});	
+			}
+		}
+	</script>
+  </head>
+</html>
