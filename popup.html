@@ -1,87 +1,92 @@
 <html>
-	<head>
-		<!--
-			based on http://sites.google.com/site/hackathoninabox/chrome/extensions/tutorial
-		-->
-		<link rel="stylesheet" href="popup.css" />		
-		<script>
-			// evaluate xpath
-			function xpath(path, node) {
-			  return document.evaluate(path, node).iterateNext();
-			}
-			
-			var bg;
-			
-			onload = setTimeout(init, 0);
+<head>
+  <!--
+    inspired from http://sites.google.com/site/hackathoninabox/chrome/extensions/tutorial
+  -->
+  <link rel="stylesheet" href="popup.css" />		
+  <script>
+  // evaluate xpath
+  function xpath(path, node) {
+    return document.evaluate(path, node).iterateNext();
+  }
 
-			function init() {
+  var StackNotify;
+  onload = setTimeout(init, 0);
 
-		        chrome.browserAction.setBadgeText({text: ''});
-		        bg = chrome.extension.getBackgroundPage();
-		        bg.newMessages = 0;
+  function init() {
 
-				inbox = document.getElementById('inbox');
-				template = xpath('//ol[@id="template"]/li', document);
-				faviconLink = xpath('//a[@class="favicon external"]', template);
-				favicon = xpath('//a[@class="favicon external"]/img', template);
-				detailsSpan = xpath('//p[@class="details"]/span', template);
-				detailsA = xpath('//p[@class="details"]/a', template);				
-				summary = xpath('//div[@class="siteInfo"]/p[@class="inboxSummary"]', template);
+    bg = chrome.extension.getBackgroundPage();
+    StackNotify = bg.StackNotify;
 
-				update();
-			}
+    if(StackNotify.unreadCount > 0 || !StackNotify.loaded) {
+      var port = chrome.extension.connect({name: "connection"});
+      port.postMessage({action: "getInbox"});
+      port.onMessage.addListener(function(msg) {
+        if (msg.response == "success")
+          processInbox(msg.unread);
+        else
+          showError(msg.response);
+      });
+    }
+    else {
+      processInbox();
+    }
+  }
 
-			function update() {
+  function processInbox(unreadCount) {
+    console.log(unreadCount);
+    inbox = document.getElementById('inbox');
+    template = xpath('//ol[@id="template"]/li', document);
+    faviconLink = xpath('//a[@class="favicon external"]', template);
+    favicon = xpath('//a[@class="favicon external"]/img', template);
+    detailsSpan = xpath('//p[@class="details"]/span', template);
+    detailsA = xpath('//p[@class="details"]/a', template);				
+    summary = xpath('//div[@class="siteInfo"]/p[@class="inboxSummary"]', template);
 
-				var item;
-				
-				if(bg.inbox.length) {
-					
-					for (var i in bg.inbox) {
+    var item;
+    for (var i in StackNotify.inbox) {
+      message = StackNotify.inbox[i];
+      template.style.backgroundColor = "#fff";
+      if(unreadCount && i < unreadCount)
+        template.style.backgroundColor = '#ffffe2';
+      faviconLink.href = message.Url;
+      favicon.src = message.FaviconUrl;
+      favicon.alt = message.SiteUrl;
+      
+      detailsSpan.innerHTML = message.Count + ' ' + message.Type  + ' on ';
+      detailsA.href = message.Url;
+      detailsA.title = message.CreationDate;
+      detailsA.innerHTML = message.Title;
+      summary.innerHTML = message.Summary + '..';
 
-						message = bg.inbox[i];
-
-						template.style.backgroundColor = "#fff";
-						if(message.IsNew) {
-							template.style.backgroundColor = '#ffffe2';
-						}
-	
-						faviconLink.href = message.Url;
-						favicon.src = message.FaviconUrl;
-						favicon.alt = message.SiteUrl;
-					
-						detailsSpan.innerHTML = message.Count + ' ' + message.Type  + ' on ';
-						detailsA.href = message.Url;
-						detailsA.title = message.CreationDate;
-						detailsA.innerHTML = message.Title;
-						summary.innerHTML = message.Summary + '..';
-					
-						item = template.cloneNode(true);
-						inbox.appendChild(item);
-		
-					}	
-				}
-				else {
-					inbox.innerHTML = '<div class="error">Please login @ <a href="http://stackoverflow.com" target="_blank">http://stackoverflow.com</a></div>';
-				}
-			}
-		</script>
-	</head>
+      item = template.cloneNode(true);
+      inbox.appendChild(item);
+    }
+  }
+  function showError(errorMessage) {
+    inbox = document.getElementById('inbox');
+    if(errorMessage == 'authentication-failed')
+      inbox.innerHTML = '<div class="error">Please login @ <a href="http://stackoverflow.com" target="_blank">http://stackoverflow.com</a></div>';
+    else
+      inbox.innerHTML = '<div class="error">Connection error!</div>';
+  }
+  </script>
+</head>
 <body>
-	<img src="header.png" width="91" height="30" alt="StackNotify" class="logo" />
-	<ol id="inbox">
-	</ol>
-	<ol id="template">
-		<li>
-			<a class="favicon external" target="_blank"><img /></a>
-			<div class="siteInfo">
-				<p class="details">
-					<span></span>
-					<a class="external" target="_blank"></a>
-				</p>
-				<p class="inboxSummary"></p>
-			</div>
-		</li>
-	</ol>
+  <img src="header.png" width="91" height="30" alt="StackNotify" class="logo" />
+  <ol id="inbox">
+  </ol>
+  <ol id="template">
+    <li>
+      <a class="favicon external" target="_blank"><img /></a>
+      <div class="siteInfo">
+        <p class="details">
+          <span></span>
+          <a class="external" target="_blank"></a>
+        </p>
+        <p class="inboxSummary"></p>
+      </div>
+    </li>
+  </ol>
 </body>
 </html>
