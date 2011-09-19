@@ -48,14 +48,6 @@
 				var unread = this.urequest.responseText.match(/class="unreadCount".*?>([0-9]*?)<\/a>/);
 				if(unread)
 					this.unreadCount = unread['1'];
-					
-        this.unreadCount = 3;
-
-				// for (var i = 0, message; message = inbox[i]; i++) {
-				// 	if(message.IsNew != false) {
-				// 		newMessages++;
-				// 	}
-				// }
 				if(this.unreadCount > 0) {
 					chrome.browserAction.setBadgeText({text: '' + this.unreadCount});
 				}				
