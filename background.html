@@ -50,6 +50,8 @@
 					this.unreadCount = unread['1'];
 				if(this.unreadCount > 0) {
 					chrome.browserAction.setBadgeText({text: '' + this.unreadCount});
+				} else {
+					chrome.browserAction.setBadgeText({text: ''});
 				}				
 
 			},
