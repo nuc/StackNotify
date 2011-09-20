@@ -1,10 +1,10 @@
+A Google Chrome extension:
+
 Your StackOverflow notification inbox, right into your browser's toolbar.
 
 - it checks for new notifications every minute
 - shows a notification badge for new items
 - supports all Stack Exchange websites
-
-Source code now on Github: https://github.com/nuc-gr/StackNotify
 
 ----------------------------------------------------------------
 
