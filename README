@@ -1,0 +1,21 @@
+Your StackOverflow notification inbox, right into your browser's toolbar.
+
+- it checks for new notifications every minute
+- shows a notification badge for new items
+- supports all Stack Exchange websites
+
+Source code now on Github: https://github.com/nuc-gr/StackNotify
+
+----------------------------------------------------------------
+
+Latest update: v0.3
+- Better synchronisation. Items will be marked as read, only when the popup will be loaded.
+
+----------------------------------------------------------------
+
+v0.2.1
+
+- Fixed badge count
+- New items now have a different color
+
+----------------------------------------------------------------
