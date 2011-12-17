@@ -2,13 +2,16 @@ A Google Chrome extension:
 
 Your StackOverflow notification inbox, right into your browser's toolbar.
 
-- it checks for new notifications every minute
-- shows a notification badge for new items
-- supports all Stack Exchange websites
+----------------------------------------------------------------
+
+v0.3.1
+
+- Fix the unread-messages badge not disappearing once messages are read. (thank you ayust!)
 
 ----------------------------------------------------------------
 
-Latest update: v0.3
+v0.3
+
 - Better synchronisation. Items will be marked as read, only when the popup will be loaded.
 
 ----------------------------------------------------------------

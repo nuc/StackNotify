@@ -1,83 +1,83 @@
 <html>
-  <head>
-	<script>
-			
-		StackNotify = {
-		
-			interval 	      : 60000,
-			request 	      : null,
-			unreadCount     : 0,
-			inbox		        : null,
-			loaded		      : false,
-			
-			init : function() {
+<head>
+<script>
+  StackNotify = {
 
-        chrome.extension.onConnect.addListener(function(port) {
-          port.onMessage.addListener(function(msg) {
-            if (msg.action == "getInbox")
-              StackNotify.getInbox(port);
-          });
+    interval 	      : 60000,
+    request 	      : null,
+    unreadCount     : 0,
+    inbox		        : null,
+    loaded		      : false,
+
+    init : function() {
+
+      chrome.extension.onConnect.addListener(function(port) {
+        port.onMessage.addListener(function(msg) {
+          if (msg.action == "getInbox") {
+            StackNotify.getInbox(port);
+          }
         });
-        
-				chrome.browserAction.setBadgeBackgroundColor({
-					color: [255, 0, 0, 255]
-				});
+      });
 
-				this.getUnreadCount();
-				
-				setInterval(this.getUnreadCount, this.interval);
-			
-				// var notification = webkitNotifications.createNotification(
-				//   'icon2.png',
-				//   'Hello!',  // notification title
-				//   'from the backround...'  // notification body text
-				// );
-				// notification.show();		
-			},
-			
-			getUnreadCount : function() {
+      chrome.browserAction.setBadgeBackgroundColor({
+        color: [255, 0, 0, 255]
+      });
 
-				this.urequest = new XMLHttpRequest();
-				this.urequest.open("GET", "http://stackoverflow.com/");
-				this.urequest.onload = StackNotify.grabUnreadCount.bind(this);
-				this.urequest.send();		
-			},
-			
-			grabUnreadCount : function() {
-				
-				var unread = this.urequest.responseText.match(/class="unreadCount".*?>([0-9]*?)<\/a>/);
-				if(unread)
-					this.unreadCount = unread['1'];
-				if(this.unreadCount > 0) {
-					chrome.browserAction.setBadgeText({text: '' + this.unreadCount});
-				} else {
-					chrome.browserAction.setBadgeText({text: ''});
-				}				
+      this.getUnreadCount();
 
-			},
-			
-			getInbox : function(port) {
-				chrome.browserAction.setBadgeText({text: ''});
-				this.request = new XMLHttpRequest();
-				this.request.open("GET", "http://stackoverflow.com/inbox/genuwine");
-				this.request.onload = StackNotify.processInbox.bind(this, port);
-				this.request.onerror = function() { port.postMessage({response: 'network-error'}); };
-				this.request.send();
-			},
-			
-			processInbox : function(port) {
-				this.inbox = JSON.parse(this.request.responseText);
-				if(this.inbox) {
-				  this.loaded = true;
-  				port.postMessage({response: 'success', unread: StackNotify.unreadCount});
-  				this.unreadCount = 0;
-  			}
-				else
-  				port.postMessage({response: 'authentication-needed'});
-			}
-		};
-		
-		onload = setTimeout(StackNotify.init.bind(StackNotify), 0);
-	</script>
-  </head>
+      setInterval(this.getUnreadCount, this.interval);
+
+      // var notification = webkitNotifications.createNotification(
+        //   'icon2.png',
+        //   'Hello!',  // notification title
+        //   'from the backround...'  // notification body text
+        // );
+        // notification.show();		
+    },
+
+    getUnreadCount : function() {
+
+      this.urequest = new XMLHttpRequest();
+      this.urequest.open("GET", "http://stackoverflow.com/");
+      this.urequest.onload = StackNotify.grabUnreadCount.bind(this);
+      this.urequest.send();		
+    },
+
+    grabUnreadCount : function() {
+      
+      var unread = this.urequest.responseText.match(/class="unreadCount".*?>([0-9]*?)<\/a>/);
+      if(unread) {
+        this.unreadCount = unread['1'];
+        chrome.browserAction.setBadgeText({text: '' + this.unreadCount});
+      }
+      else {
+        this.unreadCount = 0;
+        chrome.browserAction.setBadgeText({text: ''});
+      }
+    },
+
+    getInbox : function(port) {
+      chrome.browserAction.setBadgeText({text: ''});
+      this.request = new XMLHttpRequest();
+      this.request.open("GET", "http://stackoverflow.com/inbox/genuwine");
+      this.request.onload = StackNotify.processInbox.bind(this, port);
+      this.request.onerror = function() { port.postMessage({response: 'network-error'}); };
+      this.request.send();
+    },
+
+    processInbox : function(port) {
+      this.inbox = JSON.parse(this.request.responseText);
+      if(this.inbox) {
+        this.loaded = true;
+        port.postMessage({response: 'success', unread: StackNotify.unreadCount});
+        this.unreadCount = 0;
+      }
+      else {
+        port.postMessage({response: 'authentication-needed'});
+      }
+    }
+  };
+  onload = setTimeout(StackNotify.init.bind(StackNotify), 0);
+</script>
+</head>
 </html>
