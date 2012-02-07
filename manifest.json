@@ -1,6 +1,6 @@
 {
   "name": "StackNotify",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Stack Overflow notifications into your browser's toolbar.",
   "icons": {"48": "icon2.png"},
   "browser_action": {

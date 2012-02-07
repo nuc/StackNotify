@@ -1,8 +1,5 @@
 <html>
 <head>
-  <!--
-    inspired from http://sites.google.com/site/hackathoninabox/chrome/extensions/tutorial
-  -->
   <link rel="stylesheet" href="popup.css" />		
   <script>
     // evaluate xpath
@@ -66,7 +63,7 @@
     
     function showError(errorMessage) {
       inbox = document.getElementById('inbox');
-      if(errorMessage == 'authentication-failed') {
+      if(errorMessage == 'authentication-needed') {
         inbox.innerHTML = '<div class="error">Please login @ <a href="http://stackoverflow.com" target="_blank">http://stackoverflow.com</a></div>';
       }
       else {

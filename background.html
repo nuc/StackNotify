@@ -66,14 +66,18 @@
     },
 
     processInbox : function(port) {
-      this.inbox = JSON.parse(this.request.responseText);
-      if(this.inbox) {
-        this.loaded = true;
-        port.postMessage({response: 'success', unread: StackNotify.unreadCount});
-        this.unreadCount = 0;
-      }
-      else {
+      if(this.request.status != 200) 
         port.postMessage({response: 'authentication-needed'});
+      else {
+        this.inbox = JSON.parse(this.request.responseText);
+        if(this.inbox) {
+          this.loaded = true;
+          port.postMessage({response: 'success', unread: StackNotify.unreadCount});
+          this.unreadCount = 0;
+        }
+        else {
+          port.postMessage({response: 'authentication-needed'});
+        }
       }
     }
   };
