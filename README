@@ -2,6 +2,10 @@ A Google Chrome extension:
 
 Your StackOverflow notification inbox, right into your browser's toolbar.
 
+v0.3.3
+
+- Fixed Authentication prompt message
+
 ----------------------------------------------------------------
 
 v0.3.1
